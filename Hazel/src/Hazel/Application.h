@@ -13,7 +13,10 @@ namespace Hazel {
 		void Run();
 	};
 
-	// To be defined in CLIENT
+	/*
+	 * This function has to be defined in the CLIENT.
+	 * @return A class instance holding all of the application functionality
+	 */
 	Application* CreateApplication();
 
 }
