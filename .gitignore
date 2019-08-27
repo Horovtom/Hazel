@@ -2,6 +2,11 @@
 
 
 bin-int/
+# Since we are using premake, we can ignore these:
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln
 
 
 # ====================================================================
