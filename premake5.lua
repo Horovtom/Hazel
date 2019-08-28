@@ -62,7 +62,10 @@ project "Hazel"
         }
 
     filter "configurations:Debug"
-        defines "HZ_DEBUG"
+        defines {
+            "HZ_DEBUG",
+            "HZ_ENABLE_ASSERRTS"
+        }
         buildoptions "/MDd" -- Multithreaded debug dll
         symbols "on"
 

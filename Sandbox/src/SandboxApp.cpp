@@ -12,7 +12,7 @@ public:
 	void OnEvent(Hazel::Event& event) override {
 		HZ_TRACE("{0}", event);
 	}
-}
+};
 
 // This is a class that holds all of our application.
 class Sandbox : public Hazel::Application {
