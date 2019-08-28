@@ -1,10 +1,15 @@
 workspace "Hazel"
     architecture "x64"
+    startproject "Sandbox"
 
     configurations {
         "Debug",    -- Debug - everything enabled
         "Release",  -- Debug with a lot of information stripped, optimizations turned on, but with enabled logging
         "Dist"      -- Everything stripped, with no logging and optimized code
+    }
+
+    flags {
+        "MultiProcessorCompile"
     }
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
@@ -19,6 +24,8 @@ project "Hazel"
     location "Hazel" -- Ensure everything will be relative to the path
     kind "SharedLib" -- Specify that it is a dll
     language "C++"
+    cppdialect "C++17"
+    staticruntime "on"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -43,8 +50,6 @@ project "Hazel"
     }
 
     filter "system:windows"
-        cppdialect "C++17"
-        staticruntime "On"
         systemversion "latest"
 
         defines {
@@ -58,18 +63,18 @@ project "Hazel"
 
     filter "configurations:Debug"
         defines "HZ_DEBUG"
-        symbols "On"
+        buildoptions "/MDd" -- Multithreaded debug dll
+        symbols "on"
 
     filter "configurations:Release"
         defines "HZ_RELEASE"
-        optimize "On"
+        buildoptions "/MD"
+        optimize "on"
         
     filter "configurations:Dist"
         defines "HZ_DIST"
-        optimize "On"
-        
-
-
+        buildoptions "/MD"
+        optimize "on"
 
 project "Sandbox"
     location "Sandbox"
@@ -105,13 +110,16 @@ project "Sandbox"
 
     filter "configurations:Debug"
         defines "HZ_DEBUG"
-        symbols "On"
+        buildoptions "/MDd" -- Multithreaded debug dll
+        symbols "on"
 
     filter "configurations:Release"
         defines "HZ_RELEASE"
-        optimize "On"
+        buildoptions "/MD"
+        optimize "on"
         
     filter "configurations:Dist"
         defines "HZ_DIST"
-        optimize "On"
+        buildoptions "/MD"
+        optimize "on"
 
