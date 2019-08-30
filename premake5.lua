@@ -7,29 +7,23 @@ workspace "Hazel"
         "Release",  -- Debug with a lot of information stripped, optimizations turned on, but with enabled logging
         "Dist"      -- Everything stripped, with no logging and optimized code
     }
-
-    flags {
-        "MultiProcessorCompile"
-    }
-
+    
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 -- Include directories relative to root folder (solution directory)
 IncludeDir = {}
 IncludeDir["GLFW"] = "Hazel/vendor/GLFW/include"
 IncludeDir["Glad"] = "Hazel/vendor/Glad/include"
-IncludeDir["ImGui"] = "Hazel/vendor/imgui/include"
+IncludeDir["ImGui"] = "Hazel/vendor/imgui"
 
 include "Hazel/vendor/GLFW"
 include "Hazel/vendor/Glad"
 include "Hazel/vendor/imgui"
 
 project "Hazel"
-    location "Hazel" -- Ensure everything will be relative to the path
-    kind "SharedLib" -- Specify that it is a dll
+    location "Hazel"
+    kind "SharedLib"
     language "C++"
-    cppdialect "C++17"
-    staticruntime "on"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -37,12 +31,14 @@ project "Hazel"
     pchheader "hzpch.h"
     pchsource "Hazel/src/hzpch.cpp"
 
-    files {
+    files
+    {
         "%{prj.name}/src/**.h",
         "%{prj.name}/src/**.cpp"
     }
 
-    includedirs {
+    includedirs
+    {
         "%{prj.name}/src",
         "%{prj.name}/vendor/spdlog/include",
         "%{IncludeDir.GLFW}",
@@ -50,7 +46,8 @@ project "Hazel"
         "%{IncludeDir.ImGui}"
     }
 
-    links {
+    links 
+    { 
         "GLFW",
         "Glad",
         "ImGui",
@@ -58,35 +55,36 @@ project "Hazel"
     }
 
     filter "system:windows"
+        cppdialect "C++17"
+        staticruntime "On"
         systemversion "latest"
 
-        defines {
+        defines
+        {
             "HZ_PLATFORM_WINDOWS",
             "HZ_BUILD_DLL",
             "GLFW_INCLUDE_NONE"
         }
 
-        postbuildcommands { -- Copy compiled files to Sandbox
+        postbuildcommands
+        {
             ("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
         }
 
     filter "configurations:Debug"
-        defines {
-            "HZ_DEBUG",
-            "HZ_ENABLE_ASSERTS"
-        }
-        buildoptions "/MDd" -- Multithreaded debug dll
-        symbols "on"
+        defines "HZ_DEBUG"
+        buildoptions "/MDd"
+        symbols "On"
 
     filter "configurations:Release"
         defines "HZ_RELEASE"
         buildoptions "/MD"
-        optimize "on"
-        
+        optimize "On"
+
     filter "configurations:Dist"
         defines "HZ_DIST"
         buildoptions "/MD"
-        optimize "on"
+        optimize "On"
 
 project "Sandbox"
     location "Sandbox"
@@ -95,19 +93,22 @@ project "Sandbox"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-    
-    files {
+
+    files
+    {
         "%{prj.name}/src/**.h",
         "%{prj.name}/src/**.cpp"
     }
-    
-    includedirs {
+
+    includedirs
+    {
         "Hazel/vendor/spdlog/include",
         "Hazel/src"
     }
 
-    links {
-        "Hazel" -- It will link the Hazel project to this project (as a dependency)
+    links
+    {
+        "Hazel"
     }
 
     filter "system:windows"
@@ -115,23 +116,22 @@ project "Sandbox"
         staticruntime "On"
         systemversion "latest"
 
-        defines {
-            "HZ_PLATFORM_WINDOWS",
-            
+        defines
+        {
+            "HZ_PLATFORM_WINDOWS"
         }
 
     filter "configurations:Debug"
         defines "HZ_DEBUG"
-        buildoptions "/MDd" -- Multithreaded debug dll
-        symbols "on"
+        buildoptions "/MDd"
+        symbols "On"
 
     filter "configurations:Release"
         defines "HZ_RELEASE"
         buildoptions "/MD"
-        optimize "on"
-        
+        optimize "On"
+
     filter "configurations:Dist"
         defines "HZ_DIST"
         buildoptions "/MD"
-        optimize "on"
-
+        optimize "On"
